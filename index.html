@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoriTalks | No te pierdas nuestra próxima charla</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Pacifico&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind CSS Config: This script customizes Tailwind's default theme. Must be AFTER loading Tailwind. -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-blue': '#005A9C',
+                        'brand-orange': '#FF6700',
+                        'brand-orange-dark': '#e65c00',
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                        'lato': ['Lato', 'sans-serif'],
+                        'pacifico': ['Pacifico', 'cursive'] // Added Pacifico font
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            display: flex;
+            flex-direction: column; /* Allow content to stack vertically */
+            justify-content: flex-start; /* Align content to the top */
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f3f4f6; /* Light gray background */
+            padding: 20px;
+            box-sizing: border-box;
+            gap: 40px; /* Space between sections */
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom background pattern for the card */
+        .card-bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239CBAE7' fill-opacity='0.1' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+            background-repeat: repeat;
+        }
+
+        /* Speaker image hover effect */
+        .speaker-image {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .speaker-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Button hover effect */
+        .btn-hover-effect {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .btn-hover-effect:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(255, 103, 0, 0.4);
+        }
+        /* Talk title base style */
+        .talk-title-base {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* New animation for the talk title - subtle floating effect */
+        @keyframes subtleFloat {
+            0% {
+                transform: translateY(0px);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-3px); /* Move up slightly */
+                opacity: 0.95; /* Slightly less opaque */
+            }
+            100% {
+                transform: translateY(0px);
+                opacity: 1;
+            }
+        }
+
+        .animated-title {
+            animation: subtleFloat 3s ease-in-out infinite alternate; /* Continuous, alternating subtle float */
+        }
+
+        /* Carousel Styles */
+        .carousel-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.7s ease-in-out;
+            visibility: hidden;
+        }
+        .carousel-item.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* New animation for comments - bubble float effect */
+        @keyframes bubbleFloat {
+            0% {
+                transform: translateY(0px) scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateY(-8px) scale(1.01); /* Move up slightly, slight scale */
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(0px) scale(1);
+                opacity: 0.8;
+            }
+        }
+
+        .comment-bubble {
+            animation: bubbleFloat 4s ease-in-out infinite alternate; /* Continuous, alternating bubble float */
+        }
+
+        /* New animation for "¡Estuvo brutal!" */
+        @keyframes emphaticPop {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            25% {
+                transform: scale(1.1); /* Pop out */
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1); /* Return to normal */
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .brutal-animation {
+            display: inline-block; /* Essential for transform on inline elements */
+            animation: emphaticPop 1.5s ease-out infinite; /* Continuous pop */
+        }
+    </style>
+</head>
+<body class="font-lato text-gray-800">
+
+    <!-- Introductory Section -->
+    <section id="intro-expectativa" class="w-full max-w-4xl mx-auto bg-brand-blue text-white rounded-2xl shadow-xl p-8 md:p-12 text-center reveal">
+        <h2 class="text-3xl md:text-4xl font-bold font-poppins mb-4">¡Pilas, mi gente!</h2>
+        <p class="text-2xl md:text-3xl font-pacifico text-white mb-6 leading-tight">Laura Gabriela se lució con su charla de 'Arte y Salud Mental' en la última CoriTalks. <span class="brutal-animation text-brand-orange">¡Estuvo brutal!</span></p>
+        
+        <!-- Integrated Carousel for Past Events -->
+        <div id="archive-container" class="bg-gray-900/50 p-8 rounded-2xl mb-8">
+            <div class="text-center mb-4">
+                <h3 class="text-2xl font-bold font-poppins text-white mb-4">Revive Nuestros Momentos</h3>
+                <p class="text-md text-gray-300">Un vistazo a las charlas que nos han inspirado.</p>
+            </div>
+            <!-- Dynamic carousel content will be rendered here by renderArchive function -->
+        </div>
+
+        <button id="show-comments-btn" class="bg-brand-orange text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-orange-dark transition duration-300 shadow-xl inline-block btn-hover-effect">
+            Y, ¿qué están diciendo?
+        </button>
+    </section>
+
+    <!-- Featured Comments Section -->
+    <section id="featured-comments-section" class="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12 hidden">
+        <h2 class="text-3xl font-bold font-poppins text-brand-blue text-center mb-8">Lo que dicen nuestros colaboradores</h2>
+        <div id="comments-list" class="grid md:grid-cols-2 gap-8">
+            <!-- Comments will be dynamically loaded here -->
+        </div>
+        <div class="text-center mt-12">
+            <p class="text-xl md:text-2xl font-bold font-poppins text-brand-orange mb-8">¡Prepárate para una nueva experiencia que transformará tus finanzas!</p>
+            <button id="show-next-talk-btn" class="bg-brand-orange text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-orange-dark transition duration-300 shadow-xl inline-block btn-hover-effect">
+                ¡Mire lo que sigue!
+            </button>
+        </div>
+    </section>
+
+    <!-- Next Talk Card Section -->
+    <div id="next-talk-card-container" class="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12 reveal card-bg-pattern hidden">
+        <!-- Dynamic talk content will be rendered here -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let countdownInterval;
+
+            // --- DATA SOURCE ---
+            const nextTalkData = {
+                speaker: "Ivan Dario Restrepo Vallejo",
+                department: "Economía y Finanzas",
+                category: "JULIO - Finanzas Personales", // This will be removed from display
+                title: "Embargos y Tarjetas de Crédito: Claves para Tomar el Control",
+                description: "¿Estás enfrentando un embargo o no sabes cómo sacarle provecho a tu tarjeta de crédito? En esta charla aprenderás qué es un embargo, cómo afrontarlo sin miedo y cómo transformar tu tarjeta de crédito en una aliada financiera. ¡Toma el control de tus finanzas hoy!",
+                date: "2025-07-11T15:00:00", // Date and time of the talk
+                imageUrl: "https://i.imgur.com/1oI4tS6.jpeg", // Speaker image
+                imageUrlEvent: "https://i.imgur.com/iYj57Ys.jpeg", // Event image
+                location: "Avenida Circunvalar Area Administrativa Piso 2 Auditorio 4", // Event location
+                reservationLink: "https://wparejac.github.io/inscripcion-coritalks/" // Updated: Reservation link
+            };
+
+            const archiveData = [
+                {
+                    title: "Arte y Salud Mental",
+                    fullTitle: "Arte y Salud Mental: encontrar el equilibrio y no morir en el intento - Laura Gabriela Castro",
+                    category: "SALUD Y BIENESTAR",
+                    videoUrl: "https://www.youtube.com/embed/MAWfgJnOiEo?start=550",
+                    photos: [
+                        "https://i.imgur.com/k2DZ9dY.jpeg",
+                        "https://i.imgur.com/N624fzp.jpeg",
+                        "https://i.imgur.com/eNTJ0HY.jpeg",
+                        "https://i.imgur.com/K5lhGam.jpeg",
+                        "https://i.imgur.com/UlDWpl9.jpeg"
+                    ]
+                }
+            ];
+
+            const commentsData = [
+                {
+                    author: "María Fernanda G.",
+                    comment: "¡Excelente iniciativa! Cada charla es una oportunidad para aprender algo nuevo y conectar con otros colegas. ¡Muy útil para el crecimiento personal y profesional!",
+                    avatar: "https://placehold.co/50x50/FF6700/FFFFFF?text=MF" // Placeholder avatar
+                },
+                {
+                    author: "Carlos Alberto R.",
+                    comment: "Me encantó la dinámica de la última charla. El speaker fue muy claro y el tema súper relevante. ¡Espero con ansias la próxima!",
+                    avatar: "https://placehold.co/50x50/005A9C/FFFFFF?text=CR" // Placeholder avatar
+                },
+                {
+                    author: "Ana Lucía P.",
+                    comment: "CoriTalks es un espacio inspirador. Siempre salgo con nuevas ideas y perspectivas. ¡Felicidades al equipo por esta gran labor!",
+                    avatar: "https://placehold.co/50x50/FF6700/FFFFFF?text=AP" // Placeholder avatar
+                },
+                {
+                    author: "Jorge Andrés M.",
+                    comment: "Muy buena la organización y los temas elegidos. Es genial ver cómo se comparte el conocimiento dentro de la empresa. ¡Totalmente recomendado!",
+                    avatar: "https://placehold.co/50x50/005A9C/FFFFFF?text=JM" // Placeholder avatar
+                }
+            ];
+
+            // --- DYNAMIC CONTENT RENDERING ---
+            function renderNextTalk(data) {
+                const container = document.getElementById('next-talk-card-container');
+                if (!container) return;
+                
+                const talkDate = new Date(data.date);
+                const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                const formattedDate = talkDate.toLocaleDateString('es-ES', dateOptions);
+                const formattedTime = talkDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+                // Split the speaker name into first name(s) and last name(s)
+                const speakerNameParts = data.speaker.split(' ');
+                const firstName = speakerNameParts.slice(0, 2).join(' '); // Assuming first two words are first names
+                const lastName = speakerNameParts.slice(2).join(' '); // Remaining words are last names
+
+                container.innerHTML = `
+                    <div class="grid md:grid-cols-3 gap-8 items-start">
+                        <div class="flex flex-col items-center text-center">
+                            <img src="${data.imageUrl}" alt="Foto de ${data.speaker}" class="w-40 h-40 rounded-full shadow-lg mb-4 border-4 border-white speaker-image" loading="lazy">
+                            <p class="text-sm text-gray-600 font-semibold mb-1">SPEAKER:</p>
+                            <h4 class="font-bold font-poppins text-3xl text-brand-blue leading-tight drop-shadow-md">${firstName}<br>${lastName}</h4>
+                            <p class="text-gray-500">${data.department}</p>
+                        </div>
+                        <div class="md:col-span-2 text-center md:text-left">
+                            <img src="${data.imageUrlEvent}" alt="Imagen del evento ${data.title}" class="w-full h-auto rounded-lg shadow-md mb-6 object-cover" loading="lazy">
+                            <h3 class="text-4xl font-bold font-poppins text-gray-800 mb-4 talk-title-base animated-title">${data.title}</h3>
+                            <p class="text-gray-600 mb-6 text-justify">${data.description}</p>
+                            <p class="text-gray-700 font-bold mb-2 capitalize"><i data-lucide="calendar" class="inline-block mr-2 -mt-1"></i>${formattedDate} <i data-lucide="clock" class="inline-block ml-4 mr-2 -mt-1"></i>${formattedTime}</p>
+                            <p class="text-gray-700 font-bold mb-4 capitalize"><i data-lucide="map-pin" class="inline-block mr-2 -mt-1"></i>${data.location}</p>
+                            <div id="countdown" class="flex justify-center md:justify-start space-x-4 text-center mb-8">
+                                <div><span id="days" class="text-4xl font-bold text-brand-blue">00</span><p class="text-sm text-gray-500">DÍAS</p></div>
+                                <div><span class="text-4xl font-bold text-brand-blue">:</span></div>
+                                <div><span id="hours" class="text-4xl font-bold text-brand-blue">00</span><p class="text-sm text-gray-500">HORAS</p></div>
+                                <div><span class="text-4xl font-bold text-brand-blue">:</span></div>
+                                <div><span id="minutes" class="text-4xl font-bold text-brand-blue">00</span><p class="text-sm text-gray-500">MINS</p></div>
+                                <div><span class="text-4xl font-bold text-brand-blue">:</span></div>
+                                <div><span id="seconds" class="text-4xl font-bold text-brand-blue">00</span><p class="text-sm text-gray-500">SEGS</p></div>
+                            </div>
+                            <div class="flex justify-center md:justify-start">
+                                <a href="${data.reservationLink}" target="_blank" rel="noopener noreferrer" class="bg-brand-orange text-white px-8 py-3 rounded-full font-bold hover:bg-brand-orange-dark transition duration-300 shadow-lg inline-flex items-center justify-center btn-hover-effect">
+                                    <i data-lucide="calendar-plus" class="inline-block mr-2 -mt-1"></i>
+                                    ¡RESERVAR MI LUGAR!
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                startCountdown(data.date);
+            }
+            
+            function renderArchive(data) {
+                const container = document.getElementById('archive-container');
+                if (!container || data.length === 0) {
+                    if(container) container.innerHTML = '<p class="text-center text-gray-400">Pronto encontrarás más charlas aquí.</p>';
+                    return;
+                };
+
+                const talk = data[0]; // We are only featuring one talk
+                let carouselHtml = '';
+
+                if (talk.photos && talk.photos.length > 0) {
+                    carouselHtml = `
+                        <div class="relative w-full max-w-2xl mx-auto">
+                            <div id="photo-carousel" class="relative h-96 overflow-hidden rounded-2xl shadow-2xl bg-gray-700">
+                                ${talk.photos.map((photoUrl, index) => `
+                                    <div class="carousel-item h-full w-full ${index === 0 ? 'active' : ''}">
+                                        <img src="${photoUrl}" class="h-full w-full object-cover" alt="Image ${index + 1} of event ${talk.title}">
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <button id="prev-btn" class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/30 text-white p-2 rounded-full hover:bg-white/50 transition z-10">
+                                <i data-lucide="chevron-left"></i>
+                            </button>
+                            <button id="next-btn" class="absolute top-1/2 right-4 -translate-y-1/2 bg-white/30 text-white p-2 rounded-full hover:bg-white/50 transition z-10">
+                                <i data-lucide="chevron-right"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+
+                const archiveContentHtml = `
+                    <div class="grid lg:grid-cols-1 gap-12 items-center">
+                        ${carouselHtml}
+                        <div class="text-center mt-8">
+                            <p class="text-sm text-brand-orange font-bold uppercase tracking-wider">${talk.category}</p>
+                            <h3 class="text-4xl font-bold font-poppins mt-2 mb-6">${talk.title}</h3>
+                            <button onclick="openModal('${talk.fullTitle.replace(/'/g, "\\'")}', '${talk.videoUrl}')" class="bg-brand-orange text-white px-8 py-3 rounded-full font-bold hover:bg-brand-orange-dark transition duration-300 shadow-lg inline-flex items-center">
+                                <i data-lucide="play-circle" class="mr-3"></i>
+                                VER VIDEO
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML = archiveContentHtml;
+                
+                // Add a small delay before setting up the carousel and recreating icons
+                setTimeout(() => {
+                    if (talk.photos && talk.photos.length > 0) {
+                        setupCarousel(talk.photos.length);
+                    }
+                    lucide.createIcons(); // Recreate icons after dynamic content is loaded
+                }, 0); // 0ms delay, allows browser to parse new HTML
+            }
+
+            // Carousel Logic
+            function setupCarousel(photoCount) {
+                let currentIndex = 0;
+                let autoPlayInterval;
+                // Target carousel items specifically within the #archive-container
+                const items = document.querySelectorAll('#archive-container .carousel-item'); 
+                const prevBtn = document.querySelector('#archive-container #prev-btn'); // Target buttons within archive-container
+                const nextBtn = document.querySelector('#archive-container #next-btn'); // Target buttons within archive-container
+
+                if (items.length === 0) {
+                    console.warn("No carousel items found for setupCarousel.");
+                    return;
+                }
+
+                function showSlide(index) {
+                    items.forEach((item, i) => {
+                        if (i === index) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+                }
+
+                function nextSlide() {
+                    currentIndex = (currentIndex < photoCount - 1) ? currentIndex + 1 : 0;
+                    showSlide(currentIndex);
+                }
+
+                function startAutoPlay() {
+                    stopAutoPlay(); // Clear any existing interval before starting a new one
+                    autoPlayInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+                }
+
+                function stopAutoPlay() {
+                    clearInterval(autoPlayInterval);
+                }
+
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', () => {
+                        stopAutoPlay();
+                        currentIndex = (currentIndex > 0) ? currentIndex - 1 : photoCount - 1;
+                        showSlide(currentIndex);
+                    });
+                }
+
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', () => {
+                        stopAutoPlay();
+                        nextSlide();
+                    });
+                }
+                
+                showSlide(currentIndex); // Show the initial slide
+                startAutoPlay();
+            }
+            
+            // Countdown Timer Logic
+            function startCountdown(dateStr) {
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                }
+
+                const countdownDate = new Date(dateStr).getTime();
+                const daysEl = document.getElementById('days');
+                const hoursEl = document.getElementById('hours');
+                const minutesEl = document.getElementById('minutes');
+                const secondsEl = document.getElementById('seconds');
+
+                function updateCountdown() {
+                    const now = new Date().getTime();
+                    const distance = countdownDate - now;
+
+                    if (distance < 0) {
+                        clearInterval(countdownInterval);
+                        if (document.getElementById('countdown')) {
+                           document.getElementById('countdown').innerHTML = "<h3 class='text-2xl font-bold font-poppins text-green-600'>¡La charla ha comenzado!</h3>";
+                        }
+                        return;
+                    }
+                    if(daysEl && hoursEl && minutesEl && secondsEl){
+                        daysEl.textContent = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                        hoursEl.textContent = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                        minutesEl.textContent = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                        secondsEl.textContent = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+                    }
+                }
+                updateCountdown();
+                countdownInterval = setInterval(updateCountdown, 1000);
+            }
+
+            // Video Modal Logic
+            window.openModal = function(title, videoUrl) {
+                const videoModal = document.getElementById('videoModal');
+                const videoFrame = document.getElementById('videoFrame');
+                const modalTitle = document.getElementById('modalTitle');
+                modalTitle.textContent = title;
+                const finalUrl = videoUrl + (videoUrl.includes('?') ? '&' : '?') + 'autoplay=1';
+                videoFrame.src = finalUrl;
+                videoModal.classList.remove('hidden');
+                videoModal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+
+            window.closeModal = function() {
+                const videoModal = document.getElementById('videoModal');
+                const videoFrame = document.getElementById('videoFrame');
+                videoFrame.src = "";
+                videoModal.classList.add('hidden');
+                videoModal.classList.remove('flex');
+                document.body.style.overflow = 'auto';
+            }
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    closeModal();
+                }
+            });
+            
+            const videoModal = document.getElementById('videoModal');
+            if (videoModal) {
+                videoModal.addEventListener('click', closeModal);
+            }
+
+            // Render comments function
+            function renderComments(comments) {
+                const commentsListContainer = document.getElementById('comments-list');
+                const commentsSection = document.getElementById('featured-comments-section');
+
+                if (!commentsListContainer || !commentsSection) return;
+
+                commentsListContainer.innerHTML = ''; // Clear previous comments
+
+                const randomPositions = ['justify-self-start items-start', 'justify-self-end items-end', 'justify-self-center items-start', 'justify-self-start items-center'];
+                const sizes = ['small', 'medium', 'large'];
+                const rotations = ['rotate-1', '-rotate-1', 'rotate-2', '-rotate-2', 'rotate-3', '-rotate-3'];
+                const offsets = ['offset-top-sm', 'offset-bottom-sm', 'offset-left-sm', 'offset-right-sm']; // Custom offsets for more varied positions
+
+                comments.forEach((comment, index) => {
+                    const randomPositionClass = randomPositions[Math.floor(Math.random() * randomPositions.length)];
+                    const randomSizeClass = sizes[Math.floor(Math.random() * sizes.length)];
+                    const randomRotationClass = rotations[Math.floor(Math.random() * rotations.length)];
+                    const randomOffsetClass = offsets[Math.floor(Math.random() * offsets.length)];
+
+                    const commentHtml = `
+                        <div class="bg-gray-50 p-6 rounded-lg shadow-md comment-bubble" style="animation-delay: ${index * 0.3}s;">
+                            <div class="flex items-center mb-4">
+                                <img src="${comment.avatar}" alt="Avatar de ${comment.author}" class="w-12 h-12 rounded-full mr-4 border-2 border-brand-orange" loading="lazy">
+                                <div>
+                                    <p class="font-bold text-brand-blue">${comment.author}</p>
+                                    <p class="text-sm text-gray-500">Colaborador</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-700 text-justify">${comment.comment}</p>
+                        </div>
+                    `;
+                    // Append as a temporary div to then extract the element for animation
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = commentHtml;
+                    const commentElement = tempDiv.firstElementChild;
+                    commentsListContainer.appendChild(commentElement);
+                });
+
+                // Show the comments section after all comments are rendered and animated
+                setTimeout(() => {
+                    commentsSection.classList.remove('hidden');
+                    commentsSection.classList.add('visible');
+                }, comments.length * 300 + 300); // Delay after last comment animation
+            }
+
+
+            // --- INITIALIZATION ---
+            renderNextTalk(nextTalkData);
+            renderArchive(archiveData); // Render the archive carousel inside the intro section
+            renderComments(commentsData); // Render comments
+
+            // Reveal on load for the intro section
+            const introSection = document.getElementById('intro-expectativa');
+            if (introSection) {
+                setTimeout(() => {
+                    introSection.classList.add('visible');
+                }, 100); // Small delay for intro section
+            }
+
+            // Event listener for "Y, ¿qué están diciendo?" button (in intro-expectativa)
+            const showCommentsBtn = document.getElementById('show-comments-btn');
+            const featuredCommentsSection = document.getElementById('featured-comments-section');
+
+            if (showCommentsBtn && featuredCommentsSection) {
+                showCommentsBtn.addEventListener('click', () => {
+                    featuredCommentsSection.classList.remove('hidden'); // Show comments section
+                    featuredCommentsSection.classList.add('visible'); // Apply reveal animation
+                    featuredCommentsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll to it
+                });
+            }
+
+            // Event listener for "¡Mire lo que sigue!" button (in featured-comments-section)
+            const showNextTalkBtn = document.getElementById('show-next-talk-btn');
+            const nextTalkCardContainer = document.getElementById('next-talk-card-container');
+
+            if (showNextTalkBtn && nextTalkCardContainer) {
+                showNextTalkBtn.addEventListener('click', () => {
+                    nextTalkCardContainer.classList.remove('hidden'); // Show the next talk card
+                    nextTalkCardContainer.classList.add('visible'); // Apply reveal animation
+                    nextTalkCardContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll to it
+                });
+            }
+        });
+    </script>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-black rounded-lg shadow-2xl w-full max-w-4xl relative" onclick="event.stopPropagation()">
+            <button onclick="closeModal()" class="absolute -top-4 -right-4 text-white bg-brand-orange rounded-full w-10 h-10 flex items-center justify-center text-2xl z-10">×</button>
+            <div class="aspect-w-16 aspect-h-9">
+                <iframe id="videoFrame" class="w-full h-full rounded-lg" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <h3 id="modalTitle" class="text-white text-xl font-bold font-poppins p-4"></h3>
+        </div>
+    </div>
+</body>
+</html>
